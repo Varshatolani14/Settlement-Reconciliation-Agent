@@ -1,0 +1,470 @@
+[
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "RUN_START",
+    "ref": "BATCH-50",
+    "actor": "reconciliation-engine",
+    "method": "reconciliation-engine",
+    "detail": "Two-pass reconciliation over 50 payments / 46 settlements. Fee tolerance 3% + \u20b91.00, date window 3d. LLM engine: offline-heuristic.",
+    "status": "SUCCESS"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9001",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026001 on amount within fee tolerance + date window. Gross \u20b97754.99, fee \u20b9178.36, GST \u20b932.10, net \u20b97544.53.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9002",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026002 on payment_ref + date window. Gross \u20b98245.99, fee \u20b9148.93, GST \u20b926.81, net \u20b98070.25.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9003",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026003 on payment_ref + date window. Gross \u20b93878.49, fee \u20b978.07, GST \u20b914.05, net \u20b93786.37.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9004",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026004 on payment_ref + date window. Gross \u20b92533.99, fee \u20b958.78, GST \u20b910.58, net \u20b92464.63.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9005",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026005 on payment_ref + date window. Gross \u20b94312.99, fee \u20b977.93, GST \u20b914.03, net \u20b94221.03.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9006",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026006 on payment_ref + date window. Gross \u20b95023.75, fee \u20b9100.98, GST \u20b918.18, net \u20b94904.59.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9007",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026007 on payment_ref + date window. Gross \u20b98767.99, fee \u20b9202.16, GST \u20b936.39, net \u20b98529.44.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9009",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026009 on payment_ref + date window. Gross \u20b91811.99, fee \u20b934.93, GST \u20b96.29, net \u20b91770.77.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9010",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026010 on payment_ref + date window. Gross \u20b94565.99, fee \u20b9105.52, GST \u20b918.99, net \u20b94441.48.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9011",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026011 on payment_ref + date window. Gross \u20b97562.00, fee \u20b9136.62, GST \u20b924.59, net \u20b97400.79.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9012",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026012 on payment_ref + date window. Gross \u20b93457.49, fee \u20b969.65, GST \u20b912.54, net \u20b93375.30.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9013",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026013 on payment_ref + date window. Gross \u20b96053.49, fee \u20b9139.73, GST \u20b925.15, net \u20b95888.61.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9015",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026015 on payment_ref + date window. Gross \u20b98469.75, fee \u20b9169.40, GST \u20b930.49, net \u20b98269.86.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9016",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026016 on payment_ref + date window. Gross \u20b96950.99, fee \u20b9160.17, GST \u20b928.83, net \u20b96761.99.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9018",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026018 on payment_ref + date window. Gross \u20b95990.00, fee \u20b9120.10, GST \u20b921.62, net \u20b95848.28.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9019",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026019 on payment_ref + date window. Gross \u20b95541.00, fee \u20b9127.44, GST \u20b922.94, net \u20b95390.62.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9020",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026020 on payment_ref + date window. Gross \u20b95711.99, fee \u20b9103.32, GST \u20b918.60, net \u20b95590.07.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9021",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026021 on payment_ref + date window. Gross \u20b93402.49, fee \u20b968.35, GST \u20b912.30, net \u20b93321.84.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9023",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026023 on payment_ref + date window. Gross \u20b94669.99, fee \u20b984.36, GST \u20b915.18, net \u20b94570.45.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9024",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026024 on payment_ref + date window. Gross \u20b93062.75, fee \u20b961.56, GST \u20b911.08, net \u20b92990.11.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9025",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026025 on payment_ref + date window. Gross \u20b95537.99, fee \u20b9138.45, GST \u20b924.92, net \u20b95374.62.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9026",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026026 on payment_ref + date window. Gross \u20b91725.99, fee \u20b931.07, GST \u20b95.59, net \u20b91689.33.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9027",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026027 on payment_ref + date window. Gross \u20b92768.75, fee \u20b960.03, GST \u20b910.81, net \u20b92697.91.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9029",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026029 on payment_ref + date window. Gross \u20b91190.75, fee \u20b921.93, GST \u20b93.95, net \u20b91164.87.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9031",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026031 on payment_ref + date window. Gross \u20b94411.99, fee \u20b9101.48, GST \u20b918.27, net \u20b94292.24.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9033",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026033 on payment_ref + date window. Gross \u20b97671.00, fee \u20b9153.92, GST \u20b927.71, net \u20b97489.37.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9034",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026034 on payment_ref + date window. Gross \u20b92156.75, fee \u20b949.91, GST \u20b98.98, net \u20b92097.86.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9035",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026035 on payment_ref + date window. Gross \u20b97355.00, fee \u20b9132.89, GST \u20b923.92, net \u20b97198.19.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9036",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026036 on payment_ref + date window. Gross \u20b97026.75, fee \u20b9140.54, GST \u20b925.30, net \u20b96860.91.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9037",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026037 on payment_ref + date window. Gross \u20b92044.49, fee \u20b951.61, GST \u20b99.29, net \u20b91983.59.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9039",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026039 on amount within fee tolerance + date window. Gross \u20b94120.99, fee \u20b982.92, GST \u20b914.93, net \u20b94023.14.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9040",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026040 on payment_ref + date window. Gross \u20b96702.75, fee \u20b9154.16, GST \u20b927.75, net \u20b96520.84.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9041",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026041 on payment_ref + date window. Gross \u20b98045.99, fee \u20b9157.40, GST \u20b928.33, net \u20b97860.26.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9042",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026042 on amount within fee tolerance + date window. Gross \u20b93137.00, fee \u20b962.74, GST \u20b911.29, net \u20b93062.97.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9043",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026043 on amount within fee tolerance + date window. Gross \u20b94178.99, fee \u20b996.62, GST \u20b917.39, net \u20b94064.98.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9044",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026044 on payment_ref + date window. Gross \u20b96097.49, fee \u20b9110.05, GST \u20b919.81, net \u20b95967.63.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9045",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026045 on payment_ref + date window. Gross \u20b97696.99, fee \u20b9154.44, GST \u20b927.80, net \u20b97514.75.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9048",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026048 on payment_ref + date window. Gross \u20b91850.00, fee \u20b939.78, GST \u20b97.16, net \u20b91803.06.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9049",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026049 on payment_ref + date window. Gross \u20b98663.49, fee \u20b9199.76, GST \u20b935.96, net \u20b98427.77.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_RULE",
+    "ref": "PAY-9050",
+    "actor": "reconciliation-engine",
+    "method": "deterministic-rule",
+    "detail": "Matched to UTR2026050 on payment_ref + date window. Gross \u20b94483.75, fee \u20b980.71, GST \u20b914.53, net \u20b94388.51.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_LLM",
+    "ref": "PAY-9008",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "Matched to UTR2026008. Settlement gross \u20b96003.89 = payment \u20b98576.99 minus a partial refund of \u20b92573.10; UTR 1 day(s) later \u2014 same transaction.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "EXCEPTION",
+    "ref": "PAY-9014",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "No settlement record found within the extended date window.",
+    "status": "UNRESOLVED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "EXCEPTION",
+    "ref": "PAY-9017",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "No settlement record found within the extended date window.",
+    "status": "UNRESOLVED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_LLM",
+    "ref": "PAY-9022",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "Matched to UTR2026022. Settlement gross \u20b9535.49 equals payment \u20b9535.49; UTR landed 4 day(s) after the payment (settlement lag).",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_LLM",
+    "ref": "PAY-9028",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "Matched to UTR2026028. Settlement gross \u20b95028.75 equals payment \u20b95028.75; UTR landed 4 day(s) after the payment (settlement lag).",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_LLM",
+    "ref": "PAY-9030",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "Matched to UTR2026030. Settlement gross \u20b91247.75 equals payment \u20b91247.75; UTR landed 5 day(s) after the payment (settlement lag).",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "EXCEPTION",
+    "ref": "PAY-9032",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "No settlement record found within the extended date window.",
+    "status": "UNRESOLVED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_LLM",
+    "ref": "PAY-9038",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "Matched to UTR2026038. Settlement gross \u20b93605.70 = payment \u20b95151.00 minus a partial refund of \u20b91545.30; UTR 1 day(s) later \u2014 same transaction.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "MATCH_LLM",
+    "ref": "PAY-9046",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "Matched to UTR2026046. Settlement gross \u20b96107.25 = payment \u20b98143.00 minus a partial refund of \u20b92035.75; UTR 2 day(s) later \u2014 same transaction.",
+    "status": "MATCHED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "EXCEPTION",
+    "ref": "PAY-9047",
+    "actor": "reconciliation-engine",
+    "method": "llm-fallback (offline-heuristic)",
+    "detail": "No settlement record found within the extended date window.",
+    "status": "UNRESOLVED"
+  },
+  {
+    "timestamp": "2026-08-31 19:07:30",
+    "event": "RUN_SUMMARY",
+    "ref": "BATCH-50",
+    "actor": "reconciliation-engine",
+    "method": "reconciliation-engine",
+    "detail": "Match rate 92.0% \u2014 40 by rule, 6 by LLM, 4 exceptions.",
+    "status": "SUCCESS"
+  }
+]

@@ -1,0 +1,6 @@
+# Settlement Reconciliation Agent — dependencies
+# Tech stack per README: OpenAI API (GPT-4o), Pandas, Streamlit.
+streamlit>=1.40
+openai>=1.30
+pandas>=2.0
+python-dotenv>=1.0
