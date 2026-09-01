@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReconMind AI | Enterprise Settlement & Reconciliation System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f6ff',
+                            100: '#e0edff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        emeraldCustom: '#10b981',
+                        roseCustom: '#f43f5e',
+                        amberCustom: '#f59e0b',
+                        violetCustom: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-panel-hover:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        .glow-violet {
+            box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.25);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased text-slate-200 bg-slate-950 overflow-x-hidden">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-800 bg-slate-900/90 sticky top-0 z-40 backdrop-blur-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                <!-- Logo & Track Badge -->
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-bold text-lg text-white tracking-tight">ReconMind AI</h1>
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                                Enterprise v3.2
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400">Hybrid AI Matching, Fraud Heuristics & GL Journal Engine</p>
+                    </div>
+                </div>
+
+                <!-- Merchant & Settlement Context Selectors -->
+                <div class="hidden lg:flex items-center gap-3">
+                    <!-- Merchant Selector -->
+                    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-xs">
+                        <span class="text-slate-400 font-medium">Merchant:</span>
+                        <select id="active-merchant" onchange="switchMerchantContext()" class="bg-transparent text-slate-200 font-semibold focus:outline-none cursor-pointer">
+                            <option value="MERCH-001">Acme Global E-Commerce (USD)</option>
+                            <option value="MERCH-002">Nova Retail Holdings (EUR)</option>
+                            <option value="MERCH-003">Fintech Pay Gateway (GBP)</option>
+                        </select>
+                    </div>
+
+                    <!-- Settlement Cycle Selector -->
+                    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 text-xs">
+                        <span class="text-slate-400 font-medium">Cycle:</span>
+                        <select id="settlement-cycle" onchange="switchSettlementCycle()" class="bg-transparent text-emerald-400 font-semibold focus:outline-none cursor-pointer">
+                            <option value="T+0">T+0 Same Day Instant</option>
+                            <option value="T+1" selected>T+1 Standard Payout</option>
+                            <option value="T+2">T+2 Cross-Border Wire</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="openShareModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                        <span>Share Workspace</span>
+                    </button>
+
+                    <button id="btn-run-agent" onclick="runAIAgentAnalysis()" class="flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 rounded-lg hover:from-violet-500 hover:to-blue-500 transition-all shadow-md shadow-indigo-600/30">
+                        <svg class="w-4 h-4 animate-spin hidden" id="agent-spinner" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <svg class="w-4 h-4" id="agent-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <span>Run Hybrid AI Match</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Project Summary Banner -->
+        <div class="glass-panel rounded-xl p-5 border border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900/95 to-violet-950/40 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-violet-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                <div class="space-y-1 border-r border-slate-800/80 pr-4">
+                    <span class="text-slate-400 font-medium">System Architecture</span>
+                    <p class="text-slate-100 font-semibold text-sm">AI Financial Operations Platform</p>
+                </div>
+                <div class="space-y-1 border-r border-slate-800/80 pr-4">
+                    <span class="text-slate-400 font-medium">Selected Track</span>
+                    <p class="text-violet-400 font-semibold text-sm">AI Autonomous Fintech Solutions</p>
+                </div>
+                <div class="space-y-1 border-r border-slate-800/80 pr-4">
+                    <span class="text-slate-400 font-medium">Engine Capabilities</span>
+                    <p class="text-slate-300 font-medium line-clamp-2" title="Deterministic matching, N-Gram string proximity, Z-score fraud heuristics, double debits detection, and automated GL journal balancing.">
+                        Deterministic + Cosine/Levenshtein matching, fraud heuristics, and automated GL entries.
+                    </p>
+                </div>
+                <div class="space-y-1 flex flex-col justify-center">
+                    <span class="text-slate-400 font-medium">GitHub Repository</span>
+                    <a href="https://github.com/Varshatolani14/Settlement-Reconciliation-Agent" target="_blank" class="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-mono font-medium truncate group">
+                        <svg class="w-4 h-4 text-slate-400 group-hover:text-indigo-300" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                        </svg>
+                        <span class="truncate">Varshatolani14/...</span>
+                        <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Financial KPI Metrics -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Metric 1: Total Volume -->
+            <div class="glass-panel p-4 rounded-xl relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Gross Settlement Volume</span>
+                    <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </span>
+                </div>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span id="kpi-total-volume" class="text-2xl font-bold text-white">$648,350.00</span>
+                    <span class="text-xs text-emerald-400 font-medium">1,492 Txns</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-400">Stripe, Bank Wires & Internal Ledger</div>
+            </div>
+
+            <!-- Metric 2: Hybrid AI Match Rate -->
+            <div class="glass-panel p-4 rounded-xl relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Hybrid AI Match Rate</span>
+                    <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </span>
+                </div>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span id="kpi-match-rate" class="text-2xl font-bold text-emerald-400">95.8%</span>
+                    <span id="kpi-matched-count" class="text-xs text-slate-400">1,429 / 1,492</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                    <div id="kpi-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 95.8%"></div>
+                </div>
+            </div>
+
+            <!-- Metric 3: Active Discrepancies & Anomalies -->
+            <div class="glass-panel p-4 rounded-xl relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Discrepancies & Risks</span>
+                    <span class="p-2 rounded-lg bg-rose-500/10 text-rose-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </span>
+                </div>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span id="kpi-discrepancy-value" class="text-2xl font-bold text-rose-400">$18,420.50</span>
+                    <span id="kpi-discrepancy-count" class="text-xs text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md font-semibold">63 items</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-400">Fee Offsets, Timing Lags & Fraud Spikes</div>
+            </div>
+
+            <!-- Metric 4: Auto-Generated GL Journals -->
+            <div class="glass-panel p-4 rounded-xl relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">GL Journal Entries Posted</span>
+                    <span class="p-2 rounded-lg bg-violet-500/10 text-violet-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </span>
+                </div>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span id="kpi-agent-resolved-val" class="text-2xl font-bold text-violet-400">$14,850.25</span>
+                    <span id="kpi-agent-resolved-count" class="text-xs text-slate-300">48 Posted</span>
+                </div>
+                <div class="mt-2 text-[11px] text-violet-300/80 font-medium flex items-center gap-1">
+                    <span class="inline-block w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span>
+                    Auto-balanced Double-Entry
+                </div>
+            </div>
+        </div>
+
+        <!-- Comprehensive Module Navigation Tabs -->
+        <div class="border-b border-slate-800 flex gap-2 sm:gap-6 text-sm font-medium overflow-x-auto">
+            <button onclick="switchTab('tab-dashboard')" id="nav-tab-dashboard" class="tab-btn active pb-3 text-violet-400 border-b-2 border-violet-500 flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Dashboard & Analytics
+            </button>
+            <button onclick="switchTab('tab-reconciliation')" id="nav-tab-reconciliation" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                Reconciliation Workspace
+                <span id="tab-discrepancy-badge" class="px-2 py-0.5 text-xs bg-rose-500/20 text-rose-400 rounded-full font-semibold">12</span>
+            </button>
+            <button onclick="switchTab('tab-agent')" id="nav-tab-agent" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                AI Reasoning & GL Journals
+            </button>
+            <button onclick="switchTab('tab-heuristics')" id="nav-tab-heuristics" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                Risk & Fraud Heuristics
+                <span class="px-2 py-0.5 text-xs bg-amber-500/20 text-amber-400 rounded-full font-semibold">3 Spikes</span>
+            </button>
+            <button onclick="switchTab('tab-ingest')" id="nav-tab-ingest" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                CSV & Invoice OCR Extractor
+            </button>
+            <button onclick="switchTab('tab-reports')" id="nav-tab-reports" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Audit Log & Exporters
+            </button>
+        </div>
+
+        <!-- TAB CONTENT 1: DASHBOARD & ANALYTICS -->
+        <div id="tab-dashboard" class="tab-content space-y-6">
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Settlement Volume Line Chart -->
+                <div class="lg:col-span-2 glass-panel p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-100 text-base">7-Day Settlement & Reconciliation Volume</h3>
+                            <p class="text-xs text-slate-400">Internal ERP Gross vs Processor Net Settled Stream</p>
+                        </div>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700">Real-Time Sync</span>
+                    </div>
+                    <div class="h-64 relative">
+                        <canvas id="settlementTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Discrepancy Breakdown Doughnut -->
+                <div class="glass-panel p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-100 text-base mb-1">Discrepancy Categorization</h3>
+                        <p class="text-xs text-slate-400 mb-4">Multi-source breakdown of settlement exceptions</p>
+                        <div class="h-52 relative">
+                            <canvas id="discrepancyTypeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-xs flex justify-between text-slate-400">
+                        <span>Top Cause: <strong class="text-amber-400">Merchant Gateway Fees</strong></span>
+                        <span>Confidence: <strong class="text-emerald-400">96.4%</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Engine Highlights -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Highlight 1 -->
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-l-violet-500">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-lg bg-violet-500/10 text-violet-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm text-slate-100">Hybrid N-Gram String Matching</h4>
+                            <p class="text-xs text-slate-400 mt-0.5">Levenshtein & Cosine proximity scores resolved 34 fuzzy descriptions (e.g., <em>AMAZON PAY INC ↔ Amzn Payout</em>).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Highlight 2 -->
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-l-amber-500">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-lg bg-amber-500/10 text-amber-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm text-slate-100">Fraud Heuristics Monitor</h4>
+                            <p class="text-xs text-slate-400 mt-0.5">Flagged 2 duplicate transfer attempts and 1 velocity spike (>3 debits within 60 mins) for manual review.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Highlight 3 -->
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-l-emerald-500">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm text-slate-100">Automated GL Balancing</h4>
+                            <p class="text-xs text-slate-400 mt-0.5">Auto-generated balanced double-entry accounting entries for fee offsets and FX exchange differences.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 2: RECONCILIATION WORKSPACE -->
+        <div id="tab-reconciliation" class="tab-content hidden space-y-4">
+            <!-- Filter Bar & Search -->
+            <div class="glass-panel p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <!-- Search Input -->
+                    <div class="relative flex-1 md:w-64">
+                        <svg class="w-4 h-4 absolute left-3 top-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" id="search-query" onkeyup="filterReconciliationTable()" placeholder="Search Ref, Merchant, Amount, UTR..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-violet-500 text-slate-200">
+                    </div>
+
+                    <!-- Filter Status -->
+                    <select id="filter-status" onchange="filterReconciliationTable()" class="px-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:border-violet-500">
+                        <option value="ALL">All Statuses</option>
+                        <option value="MATCHED">Matched (Exact & Fuzzy)</option>
+                        <option value="FEE_MISMATCH">Fee Discrepancy</option>
+                        <option value="AMOUNT_MISMATCH">Amount Mismatch</option>
+                        <option value="FRAUD_FLAG">Fraud / Velocity Flag</option>
+                        <option value="RESOLVED">Agent Resolved</option>
+                    </select>
+
+                    <!-- Fuzzy Matching Tolerance Selector -->
+                    <div class="flex items-center gap-2 text-xs text-slate-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+                        <span>Fuzzy Tolerance:</span>
+                        <select id="fuzzy-tolerance" onchange="runMatchingRules()" class="bg-transparent text-violet-400 font-semibold focus:outline-none cursor-pointer">
+                            <option value="0.00">Exact ($0.00)</option>
+                            <option value="0.50" selected>± $0.50</option>
+                            <option value="2.00">± $2.00</option>
+                            <option value="5.00">± $5.00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 text-xs">
+                    <span class="text-slate-400">Showing <strong id="table-showing-count" class="text-slate-100">0</strong> items</span>
+                    <button onclick="batchApproveMatches()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Batch Approve High Confidence
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reconciliation Dual Ledger Data Table -->
+            <div class="glass-panel rounded-xl overflow-hidden border border-slate-800">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-900/90 text-slate-400 font-semibold border-b border-slate-800 uppercase tracking-wider">
+                                <th class="p-3">Ref ID & Merchant</th>
+                                <th class="p-3">Txn Date</th>
+                                <th class="p-3">Internal Gross ($)</th>
+                                <th class="p-3">Processor Net ($)</th>
+                                <th class="p-3">Fee / Variance ($)</th>
+                                <th class="p-3">Status & AI Category</th>
+                                <th class="p-3">N-Gram Score</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recon-table-body" class="divide-y divide-slate-800/60 font-mono">
+                            <!-- Injected dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 3: AI REASONING & GL JOURNALS -->
+        <div id="tab-agent" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column: Agent Controls & Selector -->
+                <div class="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-slate-100 text-base">Agent Reasoning Co-Pilot</h3>
+                        <p class="text-xs text-slate-400">Step-by-step LLM analysis and double-entry accounting suggestion</p>
+                    </div>
+
+                    <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs space-y-2">
+                        <div class="flex justify-between text-slate-400">
+                            <span>Engine:</span>
+                            <span class="text-violet-400 font-semibold">Gemini FinOps Agent v3</span>
+                        </div>
+                        <div class="flex justify-between text-slate-400">
+                            <span>Auto-Approve Threshold:</span>
+                            <span class="text-emerald-400 font-semibold">92.0% Confidence</span>
+                        </div>
+                        <div class="flex justify-between text-slate-400">
+                            <span>Double-Entry Model:</span>
+                            <span class="text-slate-200">Append-Only Ledger</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-slate-300">Select Exception Transaction:</label>
+                        <select id="agent-exception-selector" onchange="displaySelectedAgentTrace()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-violet-500">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <button onclick="postSuggestedGLJournal()" class="w-full py-2.5 px-3 text-xs font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        Post Auto-Balanced GL Journal Entry
+                    </button>
+                </div>
+
+                <!-- Right Column: Step-by-Step Chain-of-Thought & GL Preview -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Chain of Thought Trace -->
+                    <div class="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="h-3 w-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <h3 class="font-bold text-slate-100 text-base">Agent Natural Language Explanations</h3>
+                            </div>
+                            <span id="agent-confidence-pill" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                Confidence: 97.4%
+                            </span>
+                        </div>
+
+                        <div id="agent-thought-container" class="space-y-3 max-h-[350px] overflow-y-auto pr-2">
+                            <!-- Agent steps injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Auto-Generated Double-Entry GL Journal Sheet -->
+                    <div class="glass-panel p-5 rounded-xl border border-slate-800 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-bold text-slate-100 text-sm flex items-center gap-2">
+                                <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                Suggested Double-Entry Ledger Journal (Auto-Balanced)
+                            </h4>
+                            <span class="text-[11px] font-mono text-emerald-400 font-semibold">Debits = Credits Check: PASSED</span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs font-mono border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-900 text-slate-400 border-b border-slate-800 uppercase text-[10px]">
+                                        <th class="p-2.5">Account Code</th>
+                                        <th class="p-2.5">Account Name</th>
+                                        <th class="p-2.5">Memo / Description</th>
+                                        <th class="p-2.5 text-right">Debit ($)</th>
+                                        <th class="p-2.5 text-right">Credit ($)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gl-journal-table-body" class="divide-y divide-slate-800/60 text-slate-200">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 4: RISK & FRAUD HEURISTICS -->
+        <div id="tab-heuristics" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
+                <div>
+                    <h3 class="font-bold text-slate-100 text-base">Continuous Risk Heuristics & Fraud Detection</h3>
+                    <p class="text-xs text-slate-400">Automated detection of velocity spikes, duplicate debits, and Z-Score (>2.5) statistical anomalies</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Rule 1: Velocity Spikes -->
+                    <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-amber-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                Velocity Spike Detector
+                            </span>
+                            <span class="px-2 py-0.5 text-[10px] bg-amber-500/20 text-amber-400 rounded-full font-bold">ACTIVE</span>
+                        </div>
+                        <p class="text-xs text-slate-300">Flags multiple identical debit transactions occurring within a 1-hour window.</p>
+                        <div class="text-[11px] text-slate-400">Detected: <strong class="text-slate-100">1 Incident (TX-9031)</strong></div>
+                    </div>
+
+                    <!-- Rule 2: Double Debits -->
+                    <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-rose-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                Duplicate Debit Alarm
+                            </span>
+                            <span class="px-2 py-0.5 text-[10px] bg-rose-500/20 text-rose-400 rounded-full font-bold">ALARM</span>
+                        </div>
+                        <p class="text-xs text-slate-300">Alarms user if processor processes duplicate transfers within a 24-hour window.</p>
+                        <div class="text-[11px] text-slate-400">Detected: <strong class="text-rose-400">1 Duplicate Pair (TX-9029)</strong></div>
+                    </div>
+
+                    <!-- Rule 3: Z-Score Outliers -->
+                    <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-violet-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18"/></svg>
+                                Statistical Z-Score Outliers
+                            </span>
+                            <span class="px-2 py-0.5 text-[10px] bg-violet-500/20 text-violet-400 rounded-full font-bold">MONITOR</span>
+                        </div>
+                        <p class="text-xs text-slate-300">Employs standard deviation scoring (Z-Score > 2.5) to isolate abnormal transfer sizes.</p>
+                        <div class="text-[11px] text-slate-400">Detected: <strong class="text-slate-100">1 Outlier ($18,500.00)</strong></div>
+                    </div>
+                </div>
+
+                <!-- Risk Alerts Table -->
+                <div class="overflow-x-auto pt-2">
+                    <table class="w-full text-left text-xs font-mono border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 border-b border-slate-800 uppercase text-[10px]">
+                                <th class="p-3">Incident ID</th>
+                                <th class="p-3">Ref Code</th>
+                                <th class="p-3">Heuristic Type</th>
+                                <th class="p-3">Risk Metric / Score</th>
+                                <th class="p-3">Action Taken</th>
+                                <th class="p-3 text-right">Review</th>
+                            </tr>
+                        </thead>
+                        <tbody id="heuristics-table-body" class="divide-y divide-slate-800/60">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 5: CSV & INVOICE OCR EXTRACTOR -->
+        <div id="tab-ingest" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Dropzone 1: Internal Ledger Export -->
+                <div class="glass-panel p-6 rounded-xl border-2 border-dashed border-slate-700 hover:border-violet-500 transition-colors text-center space-y-3">
+                    <div class="h-12 w-12 bg-violet-500/10 text-violet-400 rounded-full flex items-center justify-center mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-100 text-sm">Upload Internal Ledger CSV</h4>
+                        <p class="text-xs text-slate-400 mt-1">Headers normalized: tx_id, date, amount, currency, merchant_id</p>
+                    </div>
+                    <input type="file" id="csv-internal-file" accept=".csv" class="hidden" onchange="handleCSVUpload(event, 'internal')">
+                    <button onclick="document.getElementById('csv-internal-file').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700">
+                        Select Ledger CSV File
+                    </button>
+                    <div id="internal-csv-status" class="text-xs text-emerald-400 font-mono">Sample Ledger Active (100 Entries)</div>
+                </div>
+
+                <!-- Dropzone 2: Processor Statement -->
+                <div class="glass-panel p-6 rounded-xl border-2 border-dashed border-slate-700 hover:border-indigo-500 transition-colors text-center space-y-3">
+                    <div class="h-12 w-12 bg-indigo-500/10 text-indigo-400 rounded-full flex items-center justify-center mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-100 text-sm">Upload Gateway / Bank Statement CSV</h4>
+                        <p class="text-xs text-slate-400 mt-1">Headers normalized: statement_id, gross_amount, net_amount, fee, utr</p>
+                    </div>
+                    <input type="file" id="csv-processor-file" accept=".csv" class="hidden" onchange="handleCSVUpload(event, 'processor')">
+                    <button onclick="document.getElementById('csv-processor-file').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700">
+                        Select Statement CSV File
+                    </button>
+                    <div id="processor-csv-status" class="text-xs text-emerald-400 font-mono">Sample Stripe Feed Active (100 Statements)</div>
+                </div>
+            </div>
+
+            <!-- Invoice & Receipt OCR Simulator Block -->
+            <div class="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-100 text-sm flex items-center gap-2">
+                            <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            AI Invoice & Bank Receipt OCR Scanner (Tesseract.js Simulator)
+                        </h4>
+                        <p class="text-xs text-slate-400">Extracts unstructured invoice receipts and matches them to pending un-reconciled statements</p>
+                    </div>
+                    <button onclick="runSimulatedOCR()" class="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-lg shadow-md flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        Scan Sample Receipt Image
+                    </button>
+                </div>
+
+                <div id="ocr-result-box" class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 hidden space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-emerald-400">OCR Extraction Complete (Confidence 98.6%)</span>
+                        <span class="text-[10px] text-slate-400 font-mono">Format: PDF/PNG Invoice</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
+                        <div class="bg-slate-950 p-2 rounded">
+                            <span class="text-slate-500 text-[10px]">Extracted Vendor:</span>
+                            <p class="text-slate-100 font-bold">Stripe Payments Europe</p>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded">
+                            <span class="text-slate-500 text-[10px]">Extracted UTR/Ref:</span>
+                            <p class="text-violet-400 font-bold">STR-88391-X</p>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded">
+                            <span class="text-slate-500 text-[10px]">Net Payout Amount:</span>
+                            <p class="text-emerald-400 font-bold">$12,450.00</p>
+                        </div>
+                        <div class="bg-slate-950 p-2 rounded">
+                            <span class="text-slate-500 text-[10px]">Deducted Processing Fee:</span>
+                            <p class="text-amber-400 font-bold">$362.50</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Synthetic Scenario Generator -->
+            <div class="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-100 text-sm">Synthetic Reconciliation Scenario Generator</h4>
+                        <p class="text-xs text-slate-400">Generate randomized test transactions with realistic financial edge cases</p>
+                    </div>
+                    <button onclick="generateSyntheticDataset()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-500 hover:to-teal-500 text-white font-semibold text-xs rounded-lg shadow-md">
+                        Generate 50 Random Scenarios
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 6: AUDIT LOG & EXPORTERS -->
+        <div id="tab-reports" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-5 rounded-xl border border-slate-800 space-y-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-100 text-base">Immutable Audit Trail & Compliance Exporters</h3>
+                        <p class="text-xs text-slate-400">Export audit-ready reconciliation packages for SOX, GAAP & IFRS compliance</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="exportReconciliationCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-lg shadow-md flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            Export Multi-Sheet CSV Log
+                        </button>
+                        <button onclick="exportPDFReport()" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs rounded-lg shadow-md flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Generate PDF Executive Summary
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Audit Log Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs font-mono">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800 uppercase tracking-wider text-[10px]">
+                                <th class="p-3">Timestamp (UTC)</th>
+                                <th class="p-3">Event Action</th>
+                                <th class="p-3">Ref ID</th>
+                                <th class="p-3">Actor / Role</th>
+                                <th class="p-3">Audit Details</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-log-body" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal 1: Manual Exception Override -->
+    <div id="modal-resolve" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-xl p-6 border border-slate-700 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-slate-100 text-base">Manual Reconciliation Override</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <span class="text-slate-400">Target Reference ID:</span>
+                    <p id="modal-ref-id" class="text-violet-400 font-mono font-bold text-sm">TX-9011</p>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Select Override Action:</label>
+                    <select id="modal-action-select" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-violet-500">
+                        <option value="FEE_WRITE_OFF">Approve Gateway Processing Fee Deduction</option>
+                        <option value="MANUAL_MATCH">Force Manual Match (Override Variance)</option>
+                        <option value="BANK_WIRE_ADJUST">Record Bank FX Wire Adjustment</option>
+                        <option value="ESCALATE_AUDIT">Escalate to External Financial Auditor</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Audit Justification Note:</label>
+                    <textarea id="modal-notes" rows="3" class="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-violet-500" placeholder="State reason for manual intervention..."></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeModal()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white bg-slate-800 rounded-lg">Cancel</button>
+                <button onclick="confirmManualResolution()" class="px-4 py-1.5 text-xs font-semibold text-white bg-violet-600 hover:bg-violet-500 rounded-lg shadow-md">Confirm Override</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Workspace Sharing & Permissions -->
+    <div id="modal-share" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-xl p-6 border border-slate-700 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-slate-100 text-base">Sharing & Role Permissions</h3>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-slate-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Invite Team Member / Auditor:</label>
+                    <div class="flex gap-2">
+                        <input type="email" id="share-email-input" placeholder="colleague@firm.com" class="flex-1 p-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-violet-500">
+                        <select id="share-role-select" class="p-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-violet-500">
+                            <option value="Editor">Editor</option>
+                            <option value="Auditor">Auditor (Read-Only)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-800 space-y-2">
+                    <span class="text-slate-400 font-semibold">Active Collaborators:</span>
+                    <div class="p-2.5 bg-slate-900 rounded-lg border border-slate-800 flex justify-between items-center">
+                        <div>
+                            <p class="text-slate-200 font-bold">varsha.tolani@fintech.com</p>
+                            <p class="text-[10px] text-slate-500">Owner (Full Admin Access)</p>
+                        </div>
+                        <span class="px-2 py-0.5 text-[10px] bg-violet-500/20 text-violet-400 rounded-full font-bold">Admin</span>
+                    </div>
+                    <div id="collaborators-list"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="addCollaborator()" class="w-full py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-md">Send Invitation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Core -->
+    <script>
+        // System Data State Store
+        let reconData = [];
+        let auditLogs = [];
+        let activeModalRef = null;
+        let trendChartInstance = null;
+        let pieChartInstance = null;
+
+        // Base Initial Seed Dataset with Multi-merchant, N-Gram strings, & Fraud Flags
+        const initialSeedData = [
+            { id: "TX-9011", date: "2026-08-25", merchant: "Acme E-Commerce", vendorDesc: "STRIPE PAYOUT GROSS", internalGross: 1250.00, processorNet: 1213.45, fee: 36.55, status: "FEE_MISMATCH", confidence: 98, ngramScore: 0.99, note: "Fee 2.9%+$0.30 deducted by Stripe", category: "Fee Deduction" },
+            { id: "TX-9012", date: "2026-08-25", merchant: "Acme E-Commerce", vendorDesc: "BANK WIRE ACH-9921", internalGross: 840.00, processorNet: 840.00, fee: 0.00, status: "MATCHED", confidence: 100, ngramScore: 1.00, note: "Exact match across both systems", category: "Exact Match" },
+            { id: "TX-9013", date: "2026-08-25", merchant: "Nova Retail", vendorDesc: "NOVA STORE PAYOUT", internalGross: 4500.00, processorNet: 4500.00, fee: 0.00, status: "MATCHED", confidence: 100, ngramScore: 1.00, note: "Exact match across both systems", category: "Exact Match" },
+            { id: "TX-9014", date: "2026-08-26", merchant: "Acme E-Commerce", vendorDesc: "AMZN PAYOUT DEPOSIT", internalGross: 299.99, processorNet: 291.00, fee: 8.99, status: "FEE_MISMATCH", confidence: 96, ngramScore: 0.92, note: "Standard card processing fee variance", category: "Fee Deduction" },
+            { id: "TX-9015", date: "2026-08-26", merchant: "Fintech Pay", vendorDesc: "WIRE TRANSFER PENDING", internalGross: 1800.00, processorNet: 0.00, fee: 0.00, status: "MISSING_PROCESSOR", confidence: 45, ngramScore: 0.40, note: "Entry found in internal ERP but absent in settlement statement", category: "Missing Record" },
+            { id: "TX-9016", date: "2026-08-26", merchant: "Nova Retail", vendorDesc: "CREDIT CARD BATCH", internalGross: 340.50, processorNet: 340.20, fee: 0.30, status: "AMOUNT_MISMATCH", confidence: 89, ngramScore: 0.95, note: "Minor rounding offset ($0.30 difference)", category: "Amount Mismatch" },
+            { id: "TX-9017", date: "2026-08-27", merchant: "Acme E-Commerce", vendorDesc: "FEDWIRE CLEARING", internalGross: 6200.00, processorNet: 6200.00, fee: 0.00, status: "MATCHED", confidence: 100, ngramScore: 1.00, note: "Exact wire match", category: "Exact Match" },
+            { id: "TX-9029", date: "2026-08-27", merchant: "Fintech Pay", vendorDesc: "DUPLICATE TRANSFER ALERT", internalGross: 5200.00, processorNet: 5200.00, fee: 0.00, status: "FRAUD_FLAG", confidence: 60, ngramScore: 1.00, note: "Duplicate transfer detected within 24h timeframe", category: "Duplicate Debit Alarm" },
+            { id: "TX-9031", date: "2026-08-27", merchant: "Acme E-Commerce", vendorDesc: "RAPID DEBIT SPIKE", internalGross: 950.00, processorNet: 922.15, fee: 27.85, status: "FRAUD_FLAG", confidence: 75, ngramScore: 0.88, note: "Velocity spike: 3 identical debits in < 1 hour", category: "Velocity Spike Detector" }
+        ];
+
+        window.onload = function() {
+            reconData = JSON.parse(JSON.stringify(initialSeedData));
+            initAuditLogs();
+            renderTable();
+            updateKPIs();
+            initCharts();
+            renderHeuristicsTable();
+            populateAgentSelector();
+            displaySelectedAgentTrace();
+        };
+
+        function initAuditLogs() {
+            auditLogs = [
+                { time: "2026-08-27 08:30:12", event: "SYSTEM_INIT", ref: "SYS-001", actor: "ReconMind Core", desc: "Initialized hybrid matching engine with 14 rule heuristics.", status: "SUCCESS" },
+                { time: "2026-08-27 08:31:05", event: "FILE_INGEST", ref: "BATCH-882", actor: "Stripe Webhook", desc: "Ingested 1,492 payout records from Stripe Settlement API.", status: "SUCCESS" },
+                { time: "2026-08-27 08:35:44", event: "FRAUD_HEURISTIC", ref: "TX-9029", actor: "Risk Engine", desc: "Flagged duplicate transfer within 24-hour window.", status: "ALARM" }
+            ];
+            renderAuditLog();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-violet-400', 'border-violet-500');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeNavBtn = document.getElementById('nav-' + tabId);
+            if (activeNavBtn) {
+                activeNavBtn.classList.remove('text-slate-400', 'border-transparent');
+                activeNavBtn.classList.add('text-violet-400', 'border-violet-500');
+            }
+        }
+
+        function switchMerchantContext() {
+            const merch = document.getElementById('active-merchant').value;
+            addAuditEvent("CONTEXT_SWITCH", merch, "Operator", `Switched active merchant context to ${merch}`, "SUCCESS");
+            filterReconciliationTable();
+        }
+
+        function switchSettlementCycle() {
+            const cycle = document.getElementById('settlement-cycle').value;
+            addAuditEvent("CYCLE_SWITCH", cycle, "System", `Settlement cycle updated to ${cycle}`, "SUCCESS");
+        }
+
+        function updateKPIs() {
+            let totalVol = 0;
+            let matchedCount = 0;
+            let discrepancyVal = 0;
+            let agentResolvedVal = 0;
+            let agentResolvedCount = 0;
+
+            reconData.forEach(item => {
+                totalVol += item.internalGross || item.processorNet;
+                if (item.status === 'MATCHED' || item.status === 'RESOLVED') {
+                    matchedCount++;
+                }
+                if (item.status !== 'MATCHED' && item.status !== 'RESOLVED') {
+                    discrepancyVal += Math.abs((item.internalGross || 0) - (item.processorNet || 0));
+                }
+                if (item.status === 'RESOLVED') {
+                    agentResolvedVal += item.internalGross;
+                    agentResolvedCount++;
+                }
+            });
+
+            const matchRate = reconData.length ? ((matchedCount / reconData.length) * 100).toFixed(1) : 0;
+
+            document.getElementById('kpi-total-volume').innerText = `$${totalVol.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('kpi-match-rate').innerText = `${matchRate}%`;
+            document.getElementById('kpi-matched-count').innerText = `${matchedCount} / ${reconData.length}`;
+            document.getElementById('kpi-progress-bar').style.width = `${matchRate}%`;
+            document.getElementById('kpi-discrepancy-value').innerText = `$${discrepancyVal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            
+            const activeDiscrepancies = reconData.filter(i => i.status !== 'MATCHED' && i.status !== 'RESOLVED').length;
+            document.getElementById('kpi-discrepancy-count').innerText = `${activeDiscrepancies} items`;
+            document.getElementById('tab-discrepancy-badge').innerText = activeDiscrepancies;
+
+            document.getElementById('kpi-agent-resolved-val').innerText = `$${agentResolvedVal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('kpi-agent-resolved-count').innerText = `${agentResolvedCount} Posted`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('recon-table-body');
+            tbody.innerHTML = '';
+
+            let count = 0;
+            reconData.forEach(item => {
+                count++;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/50 transition-colors";
+
+                let statusBadge = '';
+                if (item.status === 'MATCHED') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Matched</span>`;
+                } else if (item.status === 'FEE_MISMATCH') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Fee Deduction</span>`;
+                } else if (item.status === 'AMOUNT_MISMATCH') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">Amount Variance</span>`;
+                } else if (item.status === 'FRAUD_FLAG') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/40">Risk Flagged</span>`;
+                } else if (item.status === 'RESOLVED') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-500/10 text-violet-400 border border-violet-500/20">Agent Posted</span>`;
+                } else {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-500/10 text-slate-400">Unmatched</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-semibold text-slate-100">${item.id}</div>
+                        <div class="text-[10px] text-slate-400 font-sans">${item.vendorDesc}</div>
+                    </td>
+                    <td class="p-3 text-slate-400">${item.date}</td>
+                    <td class="p-3 text-slate-200">$${item.internalGross.toFixed(2)}</td>
+                    <td class="p-3 text-slate-200">$${item.processorNet.toFixed(2)}</td>
+                    <td class="p-3 text-amber-400 font-semibold">$${item.fee.toFixed(2)}</td>
+                    <td class="p-3">${statusBadge}</td>
+                    <td class="p-3 font-semibold text-violet-400">${(item.ngramScore * 100).toFixed(0)}%</td>
+                    <td class="p-3 text-right space-x-1">
+                        ${item.status !== 'MATCHED' && item.status !== 'RESOLVED' ? 
+                            `<button onclick="openResolveModal('${item.id}')" class="px-2 py-1 text-[11px] font-medium bg-violet-600/20 hover:bg-violet-600/40 text-violet-300 border border-violet-500/30 rounded">Resolve</button>` :
+                            `<span class="text-slate-500 text-[11px]">No Action</span>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('table-showing-count').innerText = count;
+        }
+
+        function filterReconciliationTable() {
+            const query = document.getElementById('search-query').value.toLowerCase();
+            const statusFilter = document.getElementById('filter-status').value;
+
+            const filtered = initialSeedData.filter(item => {
+                const matchesSearch = item.id.toLowerCase().includes(query) || 
+                                      item.vendorDesc.toLowerCase().includes(query) ||
+                                      item.internalGross.toString().includes(query);
+                
+                let matchesStatus = true;
+                if (statusFilter === 'MATCHED') matchesStatus = item.status === 'MATCHED';
+                else if (statusFilter === 'FEE_MISMATCH') matchesStatus = item.status === 'FEE_MISMATCH';
+                else if (statusFilter === 'AMOUNT_MISMATCH') matchesStatus = item.status === 'AMOUNT_MISMATCH';
+                else if (statusFilter === 'FRAUD_FLAG') matchesStatus = item.status === 'FRAUD_FLAG';
+                else if (statusFilter === 'RESOLVED') matchesStatus = item.status === 'RESOLVED';
+
+                return matchesSearch && matchesStatus;
+            });
+
+            reconData = filtered;
+            renderTable();
+            updateKPIs();
+        }
+
+        function runMatchingRules() {
+            const tolerance = parseFloat(document.getElementById('fuzzy-tolerance').value);
+            reconData.forEach(item => {
+                if (item.status === 'AMOUNT_MISMATCH') {
+                    const diff = Math.abs(item.internalGross - item.processorNet);
+                    if (diff <= tolerance) {
+                        item.status = 'MATCHED';
+                        item.note = `Matched using fuzzy tolerance (±$${tolerance.toFixed(2)})`;
+                        item.confidence = 96;
+                    }
+                }
+            });
+            renderTable();
+            updateKPIs();
+            updateCharts();
+        }
+
+        function batchApproveMatches() {
+            reconData.forEach(item => {
+                if (item.confidence > 95 && item.status !== 'RESOLVED') {
+                    item.status = 'MATCHED';
+                }
+            });
+            addAuditEvent("BATCH_APPROVE", "ALL_HIGH_CONF", "Operator", "Batch approved high confidence matches (>95%)", "SUCCESS");
+            renderTable();
+            updateKPIs();
+            updateCharts();
+        }
+
+        function runAIAgentAnalysis() {
+            const spinner = document.getElementById('agent-spinner');
+            const icon = document.getElementById('agent-icon');
+            spinner.classList.remove('hidden');
+            icon.classList.add('hidden');
+
+            setTimeout(() => {
+                reconData.forEach(item => {
+                    if (item.status === 'FEE_MISMATCH') {
+                        item.status = 'RESOLVED';
+                        item.confidence = 98;
+                        item.note = "Hybrid AI match calculated 2.9%+$0.30 fee and generated double-entry GL journal.";
+                        addAuditEvent("AI_AGENT_RESOLVE", item.id, "AI Agent", "Posted offset journal entry for merchant processing fee.", "RESOLVED");
+                    }
+                });
+
+                spinner.classList.add('hidden');
+                icon.classList.remove('hidden');
+                renderTable();
+                updateKPIs();
+                updateCharts();
+                populateAgentSelector();
+                displaySelectedAgentTrace();
+                switchTab('tab-agent');
+            }, 1000);
+        }
+
+        function populateAgentSelector() {
+            const selector = document.getElementById('agent-exception-selector');
+            selector.innerHTML = '';
+            
+            reconData.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.text = `${item.id} - ${item.note.substring(0, 38)}...`;
+                selector.appendChild(option);
+            });
+        }
+
+        function displaySelectedAgentTrace() {
+            const selectedId = document.getElementById('agent-exception-selector').value || (reconData[0] ? reconData[0].id : null);
+            if (!selectedId) return;
+
+            const record = reconData.find(r => r.id === selectedId);
+            const container = document.getElementById('agent-thought-container');
+            if (!record) return;
+
+            document.getElementById('agent-confidence-pill').innerText = `Confidence: ${record.confidence}%`;
+
+            container.innerHTML = `
+                <div class="p-3 bg-slate-900 rounded-lg border border-slate-800 space-y-1">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-violet-400">Step 1: Hybrid Proximity & Deterministic Filter</span>
+                        <span class="text-slate-500 font-mono">0.008s</span>
+                    </div>
+                    <p class="text-xs text-slate-300">Target transaction <code class="text-violet-300 font-mono">${record.id}</code> matched external description "${record.vendorDesc}" with N-Gram Cosine Similarity score of <strong>${(record.ngramScore*100).toFixed(0)}%</strong>.</p>
+                </div>
+
+                <div class="p-3 bg-slate-900 rounded-lg border border-slate-800 space-y-1">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-amber-400">Step 2: Variance & Fee Deduction Calculation</span>
+                        <span class="text-slate-500 font-mono">0.032s</span>
+                    </div>
+                    <p class="text-xs text-slate-300">Identified variance offset of <strong class="text-amber-400">$${(record.internalGross - record.processorNet).toFixed(2)}</strong> between Gross Order and Net Payout.</p>
+                </div>
+
+                <div class="p-3 bg-slate-900 rounded-lg border border-slate-800 space-y-1">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-indigo-400">Step 3: Natural Language Explanation</span>
+                        <span class="text-slate-500 font-mono">0.095s</span>
+                    </div>
+                    <p class="text-xs text-slate-300 font-mono bg-slate-950 p-2 rounded border border-slate-800/80">
+                        "${record.note}"
+                    </p>
+                </div>
+            `;
+
+            renderGLJournalTable(record);
+        }
+
+        function renderGLJournalTable(record) {
+            const tbody = document.getElementById('gl-journal-table-body');
+            tbody.innerHTML = '';
+
+            const fee = record.fee || 12.50;
+            const net = record.processorNet || (record.internalGross - fee);
+
+            const rows = [
+                { account: "1010-CASH-BANK", name: "Bank Operating Cash Account", memo: `Net settlement payout for ${record.id}`, debit: net.toFixed(2), credit: "0.00" },
+                { account: "5100-MERCH-FEE", name: "Merchant Gateway Fee Expense", memo: `Stripe processing fee for ${record.id}`, debit: fee.toFixed(2), credit: "0.00" },
+                { account: "1200-AR-CLEAR", name: "Accounts Receivable Clearing", memo: `Clear gross invoice value for ${record.id}`, debit: "0.00", credit: record.internalGross.toFixed(2) }
+            ];
+
+            rows.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2.5 font-bold text-violet-300">${r.account}</td>
+                    <td class="p-2.5 text-slate-200">${r.name}</td>
+                    <td class="p-2.5 text-slate-400">${r.memo}</td>
+                    <td class="p-2.5 text-right text-emerald-400 font-bold">$${r.debit}</td>
+                    <td class="p-2.5 text-right text-indigo-400 font-bold">$${r.credit}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function postSuggestedGLJournal() {
+            const selectedId = document.getElementById('agent-exception-selector').value;
+            const record = reconData.find(r => r.id === selectedId);
+            if (record) {
+                record.status = 'RESOLVED';
+                record.confidence = 100;
+                addAuditEvent("GL_JOURNAL_POST", record.id, "Senior Accountant", "Posted balanced double-entry journal (Cash & Fee Expense).", "SUCCESS");
+                renderTable();
+                updateKPIs();
+                updateCharts();
+                displaySelectedAgentTrace();
+            }
+        }
+
+        function renderHeuristicsTable() {
+            const tbody = document.getElementById('heuristics-table-body');
+            tbody.innerHTML = `
+                <tr class="hover:bg-slate-900/50">
+                    <td class="p-3 text-slate-100 font-bold">INC-801</td>
+                    <td class="p-3 text-violet-400 font-bold">TX-9029</td>
+                    <td class="p-3 text-rose-400 font-semibold">Duplicate Transfer Alarm</td>
+                    <td class="p-3 text-slate-300">2 Debits in 24h ($5,200)</td>
+                    <td class="p-3 text-amber-400 font-semibold">Held for Review</td>
+                    <td class="p-3 text-right"><button onclick="openResolveModal('TX-9029')" class="px-2 py-1 text-[10px] bg-rose-600/30 text-rose-300 rounded border border-rose-500/40">Inspect</button></td>
+                </tr>
+                <tr class="hover:bg-slate-900/50">
+                    <td class="p-3 text-slate-100 font-bold">INC-802</td>
+                    <td class="p-3 text-violet-400 font-bold">TX-9031</td>
+                    <td class="p-3 text-amber-400 font-semibold">Velocity Spike Detector</td>
+                    <td class="p-3 text-slate-300">3 Debits &lt; 60 mins</td>
+                    <td class="p-3 text-amber-400 font-semibold">Rate Limited</td>
+                    <td class="p-3 text-right"><button onclick="openResolveModal('TX-9031')" class="px-2 py-1 text-[10px] bg-amber-600/30 text-amber-300 rounded border border-amber-500/40">Inspect</button></td>
+                </tr>
+            `;
+        }
+
+        function runSimulatedOCR() {
+            const box = document.getElementById('ocr-result-box');
+            box.classList.remove('hidden');
+            addAuditEvent("OCR_EXTRACTION", "DOC-SCAN-881", "Tesseract Engine", "Extracted invoice summary, UTR, and fee variance from image receipt.", "SUCCESS");
+        }
+
+        function generateSyntheticDataset() {
+            const sampleTx = [];
+            for(let i = 1; i <= 50; i++) {
+                const id = `TX-88${10 + i}`;
+                const gross = Math.floor(Math.random() * 2000) + 50;
+                const rand = Math.random();
+                let fee = 0;
+                let net = gross;
+                let status = "MATCHED";
+                let conf = 100;
+
+                if (rand > 0.75) {
+                    fee = parseFloat((gross * 0.029 + 0.30).toFixed(2));
+                    net = gross - fee;
+                    status = "FEE_MISMATCH";
+                    conf = 96;
+                }
+
+                sampleTx.push({
+                    id: id,
+                    date: "2026-08-27",
+                    merchant: "Acme E-Commerce",
+                    vendorDesc: "STRIPE PAYOUT AUTO",
+                    internalGross: gross,
+                    processorNet: net,
+                    fee: fee,
+                    status: status,
+                    confidence: conf,
+                    ngramScore: 0.95,
+                    note: "Synthetic payment batch scenario"
+                });
+            }
+            reconData = sampleTx;
+            renderTable();
+            updateKPIs();
+            updateCharts();
+            populateAgentSelector();
+            displaySelectedAgentTrace();
+            switchTab('tab-reconciliation');
+        }
+
+        function handleCSVUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n');
+                if (type === 'internal') {
+                    document.getElementById('internal-csv-status').innerText = `Ingested: ${file.name} (${lines.length - 1} rows)`;
+                } else {
+                    document.getElementById('processor-csv-status').innerText = `Ingested: ${file.name} (${lines.length - 1} rows)`;
+                }
+                addAuditEvent("CSV_IMPORT", file.name, "User Ingest", `Normalized and loaded ${lines.length - 1} rows.`, "SUCCESS");
+            };
+            reader.readAsText(file);
+        }
+
+        function openResolveModal(id) {
+            activeModalRef = id;
+            document.getElementById('modal-ref-id').innerText = id;
+            document.getElementById('modal-resolve').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-resolve').classList.add('hidden');
+            activeModalRef = null;
+        }
+
+        function confirmManualResolution() {
+            if (!activeModalRef) return;
+            const action = document.getElementById('modal-action-select').value;
+            const notes = document.getElementById('modal-notes').value || "Manual accountant override.";
+
+            const record = reconData.find(r => r.id === activeModalRef);
+            if (record) {
+                record.status = 'RESOLVED';
+                record.confidence = 100;
+                record.note = `Override (${action}): ${notes}`;
+                addAuditEvent("MANUAL_OVERRIDE", record.id, "Senior Accountant", `Applied action: ${action}`, "RESOLVED");
+                renderTable();
+                updateKPIs();
+                updateCharts();
+            }
+            closeModal();
+        }
+
+        function openShareModal() {
+            document.getElementById('modal-share').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('modal-share').classList.add('hidden');
+        }
+
+        function addCollaborator() {
+            const email = document.getElementById('share-email-input').value;
+            const role = document.getElementById('share-role-select').value;
+            if (!email) return;
+
+            const list = document.getElementById('collaborators-list');
+            const div = document.createElement('div');
+            div.className = "p-2.5 bg-slate-900 rounded-lg border border-slate-800 flex justify-between items-center";
+            div.innerHTML = `
+                <div>
+                    <p class="text-slate-200 font-bold">${email}</p>
+                    <p class="text-[10px] text-slate-500">${role} Access</p>
+                </div>
+                <span class="px-2 py-0.5 text-[10px] bg-indigo-500/20 text-indigo-400 rounded-full font-bold">${role}</span>
+            `;
+            list.appendChild(div);
+            addAuditEvent("COLLABORATOR_INVITE", email, "Workspace Owner", `Granted ${role} permission to workspace.`, "SUCCESS");
+            document.getElementById('share-email-input').value = '';
+        }
+
+        function exportReconciliationCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Reference ID,Merchant,Date,Internal Gross,Processor Net,Fee,Status,Confidence,N-Gram Score,Notes\n";
+            reconData.forEach(row => {
+                csvContent += `"${row.id}","${row.merchant}","${row.date}",${row.internalGross},${row.processorNet},${row.fee},"${row.status}",${row.confidence},${row.ngramScore},"${row.note}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `ReconMind_Audit_Report_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportPDFReport() {
+            alert("Generated SOX/GAAP Audit PDF Executive Summary report.");
+            addAuditEvent("PDF_EXPORT", "REPORT-PDF", "Auditor Export", "Downloaded GAAP compliant PDF summary.", "SUCCESS");
+        }
+
+        function addAuditEvent(event, ref, actor, desc, status) {
+            const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            auditLogs.unshift({ time: now, event, ref, actor, desc, status });
+            renderAuditLog();
+        }
+
+        function renderAuditLog() {
+            const tbody = document.getElementById('audit-log-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            auditLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/40";
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-400">${log.time}</td>
+                    <td class="p-3 font-semibold text-violet-400">${log.event}</td>
+                    <td class="p-3 text-slate-200">${log.ref}</td>
+                    <td class="p-3 text-indigo-300">${log.actor}</td>
+                    <td class="p-3 text-slate-300">${log.desc}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 font-bold">${log.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function initCharts() {
+            const ctxTrend = document.getElementById('settlementTrendChart').getContext('2d');
+            trendChartInstance = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: ['Aug 21', 'Aug 22', 'Aug 23', 'Aug 24', 'Aug 25', 'Aug 26', 'Aug 27'],
+                    datasets: [
+                        {
+                            label: 'Internal Gross Volume ($)',
+                            data: [72000, 84000, 68000, 99000, 114000, 92000, 118000],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.12)',
+                            fill: true,
+                            tension: 0.35
+                        },
+                        {
+                            label: 'Processor Net Settled ($)',
+                            data: [69800, 81400, 65900, 96100, 110600, 89300, 114500],
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderDash: [4, 4],
+                            tension: 0.35
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#94a3b8', font: { size: 11 } } }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+
+            const ctxPie = document.getElementById('discrepancyTypeChart').getContext('2d');
+            pieChartInstance = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Exact & Fuzzy Matched', 'Fee Deductions', 'Amount Mismatches', 'Risk/Fraud Flags'],
+                    datasets: [{
+                        data: [78, 14, 5, 3],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#8b5cf6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if (!pieChartInstance) return;
+            const matched = reconData.filter(d => d.status === 'MATCHED' || d.status === 'RESOLVED').length;
+            const fee = reconData.filter(d => d.status === 'FEE_MISMATCH').length;
+            const amount = reconData.filter(d => d.status === 'AMOUNT_MISMATCH').length;
+            const fraud = reconData.filter(d => d.status === 'FRAUD_FLAG').length;
+
+            pieChartInstance.data.datasets[0].data = [matched, fee, amount, fraud];
+            pieChartInstance.update();
+        }
+    </script>
+</body>
+</html>
